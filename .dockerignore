@@ -1,0 +1,73 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Environment
+.env
+.env.local
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+docs/build/
+*.md
+
+# Logs and databases
+logs/
+*.log
+*.db
+*.sqlite
+
+# Test files
+tests/
+test_*.py
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Data directories (will be mounted as volumes)
+data/
+chroma_db/
+documents/
+backups/
+cache/
+temp/
+
+# Development
+*.ipynb
+.ipynb_checkpoints/
+notebooks/
+
+# OS
+Thumbs.db
+.DS_Store

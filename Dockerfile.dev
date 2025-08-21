@@ -1,0 +1,57 @@
+# Development Dockerfile with hot reload support
+FROM python:3.11-slim
+
+# Install development dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    vim \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN useradd -m -u 1000 raguser && \
+    mkdir -p /app /data && \
+    chown -R raguser:raguser /app /data
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements
+COPY docs/requirements.txt .
+
+# Install Python dependencies (as root for system-wide access)
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir \
+        ipython \
+        ipdb \
+        pytest \
+        pytest-asyncio \
+        pytest-cov \
+        black \
+        isort \
+        flake8 \
+        mypy \
+        watchdog
+
+# Create necessary directories
+RUN mkdir -p /data/{config,logs,documents,chroma_db,backups,cache,temp} && \
+    chown -R raguser:raguser /data
+
+# Switch to non-root user
+USER raguser
+
+# Environment variables
+ENV BASE_DIR=/data \
+    DOCUMENTS_DIR=/data/documents \
+    CHROMA_DIR=/data/chroma_db \
+    LOGS_DIR=/data/logs \
+    PYTHONPATH=/app \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Expose ports
+EXPOSE 8000 5678
+
+# Default command (can be overridden)
+CMD ["python", "-m", "uvicorn", "src.production_api:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
