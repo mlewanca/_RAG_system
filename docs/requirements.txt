@@ -1,0 +1,54 @@
+# Enhanced RAG System - Python Dependencies
+# Core RAG and LangChain dependencies
+langchain==0.3.*
+langchain-community>=0.0.20
+langchain-ollama>=0.1.0
+# Document processing
+pypdf>=4.0.0
+unstructured[pdf]>=0.15.0
+pillow>=10.0.0
+# Vector database and embeddings
+chromadb>=0.4.0
+# Web framework and API
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+# Security and authentication (CRITICAL)
+passlib[bcrypt]>=1.7.4
+python-jose[cryptography]>=3.3.0
+cryptography>=41.0.0
+bcrypt>=4.0.0
+pyjwt>=2.8.0
+email-validator>=2.1.0
+# Rate limiting and security
+slowapi>=0.1.9
+# Data processing
+pandas>=2.0.0
+numpy>=1.24.0
+# Machine learning and AI
+torch>=2.0.0
+torchvision>=0.15.0
+# System monitoring
+psutil>=5.9.0
+prometheus-client>=0.19.0
+# Configuration and validation
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+# Logging and output
+structlog>=23.0.0
+rich>=13.0.0
+tqdm>=4.66.0
+# Debian-specific utilities
+distro>=1.8.0
+# Development and debugging (optional)
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+httpx>=0.25.0
+# Optional: Enhanced document processing
+python-magic>=0.4.27
+python-docx>=0.8.11
+openpyxl>=3.1.0
+xlsxwriter>=3.1.0
+# Optional: Database support for future upgrades
+psycopg2-binary>=2.9.0
+sqlalchemy>=2.0.0
