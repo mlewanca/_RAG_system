@@ -1,4 +1,4 @@
-# Enhanced RAG System - Python Dependencies
+# Enhanced RAG System - Secure Python Dependencies
 # Updated with specific versions to address security vulnerabilities
 
 # Core RAG and LangChain dependencies
