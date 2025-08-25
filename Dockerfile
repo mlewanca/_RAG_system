@@ -45,6 +45,7 @@ RUN pip install --user --no-cache-dir \
 
 # Install PyTorch separately with retry
 RUN pip install --user --no-cache-dir --default-timeout=1000 \
+    --index-url https://download.pytorch.org/whl/cpu \
     torch>=2.0.0 \
     torchvision>=0.15.0
 
