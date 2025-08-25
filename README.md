@@ -55,6 +55,7 @@ This RAG system provides:
 - **Usage**:
   - [API Documentation](docs/api_documentation.md) - Complete API reference
   - [Adding User Groups](docs/adding_user_groups.md) - Extend with new roles
+  - [RAG & Ollama Architecture](docs/rag_ollama_architecture.md) - How RAG works with models
   - [Deployment Guide](docs/deployment_guide.md) - Production deployment
 
 ## 🛠️ Installation Methods

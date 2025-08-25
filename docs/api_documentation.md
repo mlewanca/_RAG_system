@@ -417,3 +417,29 @@ Interactive API documentation is available at:
    - Always use HTTPS in production
    - Validate and sanitize all inputs
    - Keep authentication tokens short-lived
+
+## Frequently Asked Questions
+
+### Q: Can I access my documents directly through Ollama?
+**A**: No. Documents indexed in the RAG system are only accessible through the RAG API. Direct Ollama access (`ollama run model`) will not include your documents. This is by design for security and access control. See [RAG & Ollama Architecture](rag_ollama_architecture.md) for details.
+
+### Q: Do I need to retrain models when adding documents?
+**A**: No. The RAG system dynamically retrieves relevant documents for each query. Simply process new documents through the indexing system and they'll be immediately available.
+
+### Q: How are documents secured?
+**A**: Documents are protected by:
+- JWT authentication required for all API calls
+- Role-based access control (RBAC) for document categories
+- Audit logging of all access
+- Documents filtered based on user permissions
+
+### Q: What's the maximum document size?
+**A**: Individual documents can be up to 100MB. The system automatically chunks large documents for processing. For best performance, keep documents under 10MB.
+
+### Q: Can I use different models?
+**A**: Yes. Update the model configuration in `.env`:
+```env
+GENERATION_MODEL=your-model-name
+EMBEDDING_MODEL=your-embedding-model
+```
+Ensure the models are installed in Ollama first.
