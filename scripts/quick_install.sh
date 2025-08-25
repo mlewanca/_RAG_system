@@ -114,7 +114,8 @@ configure_environment() {
     
     # Generate secure JWT secret
     JWT_SECRET=$(openssl rand -base64 64 | tr -d '\n')
-    sed -i "s/your-secret-key-here-minimum-32-characters-long/$JWT_SECRET/" .env
+    # Use | as delimiter since JWT secret might contain / characters
+    sed -i "s|your-secret-key-here-minimum-32-characters-long|$JWT_SECRET|" .env
     
     # Create data directories
     mkdir -p data/{config,logs,documents,chroma_db,backups,cache}
