@@ -12,6 +12,7 @@ from tabulate import tabulate
 sys.path.append(str(Path(__file__).parent.parent))
 
 from config.config import RAGConfig
+from config.roles import get_valid_roles, validate_role
 from src.security import SecurityManager
 
 class UserManager:
@@ -106,8 +107,11 @@ class UserManager:
     
     def change_role(self, username: str, new_role: str) -> bool:
         """Change user role"""
-        if new_role not in ["admin", "developer", "service"]:
+        # Validate role using central configuration
+        if not validate_role(new_role):
+            valid_roles = get_valid_roles()
             print(f"Invalid role: {new_role}")
+            print(f"Valid roles are: {', '.join(valid_roles)}")
             return False
         
         user = self.security_manager.get_user(username)
@@ -271,7 +275,7 @@ def main():
     # Change role
     role_parser = subparsers.add_parser("change-role", help="Change user role")
     role_parser.add_argument("username", help="Username")
-    role_parser.add_argument("role", choices=["admin", "developer", "service"], help="New role")
+    role_parser.add_argument("role", choices=get_valid_roles(), help="New role")
     
     # Update user
     update_parser = subparsers.add_parser("update", help="Update user information")

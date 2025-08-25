@@ -5,6 +5,11 @@ from typing import List, Dict, Optional, Any
 from datetime import datetime
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
+import sys
+from pathlib import Path
+
+# Add parent directory to path for imports
+sys.path.append(str(Path(__file__).parent.parent))
 
 from langchain_community.embeddings import OllamaEmbeddings
 from langchain_community.llms import Ollama
@@ -12,6 +17,8 @@ from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 import chromadb
 from chromadb.config import Settings
+
+from config.roles import ROLE_PERMISSIONS, get_role_permissions
 
 logger = logging.getLogger(__name__)
 
@@ -41,12 +48,8 @@ class EnhancedRetriever:
         
         self.collection_name = "rag_documents"
         
-        # Define role-based access permissions
-        self.role_permissions = {
-            "admin": ["service", "rnd", "archive"],
-            "developer": ["service", "rnd"],
-            "service": ["service"]
-        }
+        # Use role permissions from central configuration
+        self.role_permissions = ROLE_PERMISSIONS
         
         # Initialize prompt template
         self.prompt_template = """You are a helpful AI assistant with access to a document database.
@@ -68,7 +71,7 @@ class EnhancedRetriever:
     
     def get_user_filters(self, user_role: str) -> Dict[str, Any]:
         """Get document filters based on user role"""
-        allowed_categories = self.role_permissions.get(user_role, ["service"])
+        allowed_categories = get_role_permissions(user_role)
         
         # Build filter for allowed document categories
         filters = {

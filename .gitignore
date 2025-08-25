@@ -47,8 +47,10 @@ venv/
 env/
 virtualenv/
 
-# Configuration files
+# Configuration files  
+# Ignore all Python files in config except roles.py
 config/*.py
+!config/roles.py
 
 # Cache directories
 cache/

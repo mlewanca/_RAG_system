@@ -11,6 +11,7 @@ import argparse
 sys.path.append(str(Path(__file__).parent.parent))
 
 from config.config import RAGConfig
+from config.roles import get_valid_roles, get_role_description, validate_role
 from src.security import SecurityManager
 
 def create_user_interactive(security_manager: SecurityManager):
@@ -41,17 +42,22 @@ def create_user_interactive(security_manager: SecurityManager):
     
     # Get role
     print("\nAvailable roles:")
-    print("  1. admin - Full system access")
-    print("  2. developer - Access to service and R&D documents")
-    print("  3. service - Access to service documents only")
+    valid_roles = get_valid_roles()
+    for i, role in enumerate(valid_roles, 1):
+        description = get_role_description(role)
+        print(f"  {i:2}. {role:<15} - {description}")
     
     while True:
-        role_choice = input("\nSelect role (1-3): ").strip()
-        role_map = {"1": "admin", "2": "developer", "3": "service"}
-        if role_choice in role_map:
-            role = role_map[role_choice]
-            break
-        print("Invalid choice. Please select 1, 2, or 3")
+        role_choice = input(f"\nSelect role (1-{len(valid_roles)}): ").strip()
+        try:
+            choice_idx = int(role_choice) - 1
+            if 0 <= choice_idx < len(valid_roles):
+                role = valid_roles[choice_idx]
+                break
+            else:
+                print(f"Invalid choice. Please select 1-{len(valid_roles)}")
+        except ValueError:
+            print(f"Invalid input. Please enter a number between 1 and {len(valid_roles)}")
     
     # Get password
     while True:
@@ -117,8 +123,10 @@ def create_user_batch(security_manager: SecurityManager, username: str, email: s
         if security_manager.get_user(username):
             raise ValueError(f"User '{username}' already exists")
         
-        if role not in ["admin", "developer", "service"]:
-            raise ValueError(f"Invalid role: {role}")
+        # Validate role using central configuration
+        if not validate_role(role):
+            valid_roles = get_valid_roles()
+            raise ValueError(f"Invalid role: {role}. Valid roles are: {', '.join(valid_roles)}")
         
         valid, message = security_manager.validate_password_strength(password)
         if not valid:
@@ -166,7 +174,7 @@ def main():
     parser.add_argument("--batch", action="store_true", help="Batch mode")
     parser.add_argument("--username", help="Username (batch mode)")
     parser.add_argument("--email", help="Email (batch mode)")
-    parser.add_argument("--role", choices=["admin", "developer", "service"], 
+    parser.add_argument("--role", choices=get_valid_roles(), 
                        help="User role (batch mode)")
     parser.add_argument("--password", help="Password (batch mode)")
     parser.add_argument("--full-name", help="Full name (batch mode)")

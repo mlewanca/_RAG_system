@@ -131,8 +131,8 @@ class DocumentProcessor:
             logger.error(f"Error loading document {file_path}: {e}")
             return None
     
-    def process_document(self, file_path: str) -> Dict[str, Any]:
-        """Process a single document"""
+    def process_document(self, file_path: str, category: str = "service") -> Dict[str, Any]:
+        """Process a single document with optional category specification"""
         file_path = Path(file_path)
         
         if not file_path.exists():
@@ -165,6 +165,7 @@ class DocumentProcessor:
             # Add metadata to chunks
             for chunk in chunks:
                 chunk.metadata.update(metadata)
+                chunk.metadata['category'] = category  # Add category to metadata
             
             # Store in vector database
             collection = self.client.get_or_create_collection(self.collection_name)
@@ -186,8 +187,8 @@ class DocumentProcessor:
                 ids=ids
             )
             
-            # Copy to appropriate directory
-            category_dir = self.documents_dir / "service"  # Default category
+            # Copy to appropriate directory based on specified category
+            category_dir = self.documents_dir / category
             category_dir.mkdir(exist_ok=True)
             destination = category_dir / file_path.name
             shutil.copy2(file_path, destination)
@@ -215,13 +216,13 @@ class DocumentProcessor:
                 "quarantined": True
             }
     
-    def batch_process(self, file_paths: List[str], max_workers: int = 4) -> List[Dict[str, Any]]:
+    def batch_process(self, file_paths: List[str], max_workers: int = 4, category: str = "service") -> List[Dict[str, Any]]:
         """Process multiple documents in parallel"""
         results = []
         
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             future_to_path = {
-                executor.submit(self.process_document, path): path 
+                executor.submit(self.process_document, path, category): path 
                 for path in file_paths
             }
             
