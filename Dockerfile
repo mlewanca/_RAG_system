@@ -14,8 +14,51 @@ WORKDIR /app
 # Copy requirements first for better caching
 COPY docs/requirements.txt .
 
-# Install Python dependencies
-RUN pip install --user --no-cache-dir -r requirements.txt
+# Install smaller dependencies first
+RUN pip install --user --no-cache-dir \
+    langchain==0.3.* \
+    langchain-community>=0.0.20 \
+    langchain-ollama>=0.1.0 \
+    pypdf>=4.0.0 \
+    pillow>=10.0.0 \
+    chromadb>=0.4.0 \
+    fastapi>=0.104.0 \
+    uvicorn[standard]>=0.24.0 \
+    python-multipart>=0.0.6 \
+    passlib[bcrypt]>=1.7.4 \
+    python-jose[cryptography]>=3.3.0 \
+    cryptography>=41.0.0 \
+    bcrypt>=4.0.0 \
+    pyjwt>=2.8.0 \
+    email-validator>=2.1.0 \
+    slowapi>=0.1.9 \
+    pandas>=2.0.0 \
+    numpy>=1.24.0 \
+    psutil>=5.9.0 \
+    prometheus-client>=0.19.0 \
+    pydantic>=2.0.0 \
+    pydantic-settings>=2.0.0 \
+    structlog>=23.0.0 \
+    rich>=13.0.0 \
+    tqdm>=4.66.0 \
+    distro>=1.8.0
+
+# Install PyTorch separately with retry
+RUN pip install --user --no-cache-dir --default-timeout=1000 \
+    torch>=2.0.0 \
+    torchvision>=0.15.0
+
+# Install remaining dependencies
+RUN pip install --user --no-cache-dir \
+    pytest>=7.4.0 \
+    pytest-asyncio>=0.21.0 \
+    httpx>=0.25.0 \
+    python-magic>=0.4.27 \
+    python-docx>=0.8.11 \
+    openpyxl>=3.1.0 \
+    xlsxwriter>=3.1.0 \
+    psycopg2-binary>=2.9.0 \
+    sqlalchemy>=2.0.0
 
 # Production image
 FROM python:3.11-slim
