@@ -115,6 +115,26 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.utcnow()}
 
+# Root endpoint - Welcome page
+@app.get("/")
+async def root():
+    """API Welcome Page"""
+    return {
+        "message": "Enhanced RAG System API",
+        "version": "1.0.0",
+        "description": "Production-ready Retrieval-Augmented Generation System",
+        "endpoints": {
+            "documentation": {
+                "swagger": "/api/docs",
+                "redoc": "/api/redoc"
+            },
+            "health": "/health",
+            "authentication": "/api/auth/login",
+            "query": "/api/query"
+        },
+        "timestamp": datetime.utcnow()
+    }
+
 # Authentication endpoints
 @app.post("/api/auth/login", response_model=Token)
 async def login(request: LoginRequest):
