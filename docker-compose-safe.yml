@@ -1,0 +1,31 @@
+services:
+  rag-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rag-api
+    network_mode: "host"
+    volumes:
+      - ./data:/data
+      - ./config/.env:/app/.env:ro
+    environment:
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://localhost:11434}
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key-here-minimum-32-characters}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: rag-redis
+    network_mode: "host"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --bind 127.0.0.1 --protected-mode yes
+    restart: unless-stopped
+
+volumes:
+  redis_data:
