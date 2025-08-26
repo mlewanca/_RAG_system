@@ -71,6 +71,19 @@ services:
       - GF_USERS_ALLOW_SIGN_UP=false
     restart: unless-stopped
 
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    container_name: rag-streamlit
+    depends_on:
+      - rag-api
+    ports:
+      - "8501:8501"
+    environment:
+      - API_BASE_URL=http://rag-api:8000
+    restart: unless-stopped
+
 volumes:
   redis_data:
   prometheus_data:

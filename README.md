@@ -1,6 +1,6 @@
 # RAG System
 
-[![Version](https://img.shields.io/badge/version-0.1-blue.svg)](https://github.com/mlewanca/_RAG_system/releases/tag/v0.1)
+[![Version](https://img.shields.io/badge/version-0.2-blue.svg)](https://github.com/mlewanca/_RAG_system/releases/tag/v0.2)
 
 A production-ready Retrieval-Augmented Generation (RAG) system with enterprise-grade security, scalability, and modularity.
 
@@ -23,6 +23,7 @@ This RAG system provides:
 - **Enterprise Security**: JWT authentication, rate limiting, and audit logging
 - **Easy Scalability**: Modular design for adding new departments and roles
 - **Production Ready**: Docker support, monitoring, and comprehensive documentation
+- **Web Interface**: Modern Streamlit UI for easy document management and querying
 
 ## 🏗️ Project Structure
 
@@ -45,6 +46,7 @@ This RAG system provides:
 - **Multi-Model Support**: Gemma3:27b, Qwen3:30b, and Nomic embeddings
 - **Role-Based Access**: Flexible permission system for different departments
 - **RESTful API**: Well-documented API with FastAPI
+- **Web Interface**: Streamlit UI for document upload, querying, and admin tasks
 - **Docker Support**: Easy deployment with Docker Compose
 - **Comprehensive Monitoring**: Prometheus, Grafana, and structured logging
 - **Security First**: Enterprise-grade authentication and authorization
