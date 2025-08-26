@@ -39,10 +39,9 @@ class DocumentProcessor:
             dir_path.mkdir(parents=True, exist_ok=True)
         
         # Initialize embeddings
-        ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
         self.embeddings = OllamaEmbeddings(
             model=config.embedding_model,
-            base_url=ollama_base_url
+            base_url=config.ollama_base_url
         )
         
         # Initialize vector store

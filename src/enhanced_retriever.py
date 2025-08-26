@@ -28,16 +28,15 @@ class EnhancedRetriever:
         self.config = config
         
         # Initialize embeddings
-        ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
         self.embeddings = OllamaEmbeddings(
             model=config.embedding_model,
-            base_url=ollama_base_url
+            base_url=config.ollama_base_url
         )
         
         # Initialize LLM
         self.llm = Ollama(
             model=config.generation_model,
-            base_url=ollama_base_url,
+            base_url=config.ollama_base_url,
             temperature=0.7,
             num_predict=512
         )
