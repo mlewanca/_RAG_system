@@ -44,8 +44,14 @@ class DocumentProcessor:
             base_url=config.ollama_base_url
         )
         
-        # Initialize vector store
-        self.client = chromadb.PersistentClient(path=str(self.chroma_dir))
+        # Initialize vector store with explicit settings to avoid conflicts
+        self.client = chromadb.PersistentClient(
+            path=str(self.chroma_dir),
+            settings=chromadb.Settings(
+                anonymized_telemetry=False,
+                allow_reset=True
+            )
+        )
         self.collection_name = "rag_documents"
         
         # Initialize text splitter

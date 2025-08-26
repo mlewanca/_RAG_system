@@ -41,10 +41,13 @@ class EnhancedRetriever:
             num_predict=512
         )
         
-        # Initialize ChromaDB client
+        # Initialize ChromaDB client with explicit settings to avoid conflicts
         self.client = chromadb.PersistentClient(
             path=str(config.chroma_dir),
-            settings=Settings(anonymized_telemetry=False)
+            settings=Settings(
+                anonymized_telemetry=False,
+                allow_reset=True
+            )
         )
         
         self.collection_name = "rag_documents"
