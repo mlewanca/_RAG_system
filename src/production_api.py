@@ -1,6 +1,6 @@
 """Production API for RAG System with FastAPI"""
 
-from fastapi import FastAPI, HTTPException, Depends, status, Request, File, UploadFile
+from fastapi import FastAPI, HTTPException, Depends, status, Request, File, UploadFile, Form
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, HTMLResponse
@@ -316,9 +316,9 @@ async def upload_document(
 # Document upload endpoint with file upload (admin only)
 @app.post("/api/documents/upload-file", response_model=DocumentUploadResponse)
 async def upload_document_file(
-    file: UploadFile = File(...),
-    category: str = "service",
-    current_user = Depends(get_current_user)
+    current_user = Depends(get_current_user),
+    file: UploadFile = File(..., description="Document file to upload"),
+    category: str = Form(default="service", description="Document category")
 ):
     if current_user.role != "admin":
         raise HTTPException(
