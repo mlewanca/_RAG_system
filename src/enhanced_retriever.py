@@ -34,7 +34,7 @@ class EnhancedRetriever:
         )
         
         # Initialize LLM
-        self.llm = Ollama(
+        self.llm = OllamaLLM(
             model=config.generation_model,
             base_url=config.ollama_base_url,
             temperature=0.7,
