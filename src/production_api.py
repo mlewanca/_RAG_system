@@ -3,7 +3,8 @@
 from fastapi import FastAPI, HTTPException, Depends, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict
 from datetime import datetime
@@ -50,14 +51,17 @@ security_manager = SecurityManager(config)
 retriever = EnhancedRetriever(config)
 document_processor = DocumentProcessor(config)
 
-# Initialize FastAPI app
+# Initialize FastAPI app with local Swagger UI
 app = FastAPI(
     title="Enhanced RAG System API",
     description="Production-ready Retrieval-Augmented Generation System",
     version="1.0.0",
-    docs_url="/api/docs",
+    docs_url=None,  # We'll create custom docs endpoint
     redoc_url="/api/redoc"
 )
+
+# Mount static files for Swagger UI
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Setup CORS
 app.add_middleware(
@@ -134,6 +138,44 @@ async def root():
         },
         "timestamp": datetime.utcnow()
     }
+
+# Custom Swagger UI with local assets
+@app.get("/api/docs", include_in_schema=False)
+async def custom_swagger_ui():
+    return HTMLResponse(
+        content=f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <link type="text/css" rel="stylesheet" href="/static/swagger/swagger-ui.css">
+            <title>{app.title} - Swagger UI</title>
+        </head>
+        <body>
+            <div id="swagger-ui"></div>
+            <script src="/static/swagger/swagger-ui-bundle.js"></script>
+            <script src="/static/swagger/swagger-ui-standalone-preset.js"></script>
+            <script>
+            window.onload = function() {{
+                window.ui = SwaggerUIBundle({{
+                    url: '/openapi.json',
+                    dom_id: '#swagger-ui',
+                    deepLinking: true,
+                    presets: [
+                        SwaggerUIBundle.presets.apis,
+                        SwaggerUIStandalonePreset
+                    ],
+                    plugins: [
+                        SwaggerUIBundle.plugins.DownloadUrl
+                    ],
+                    layout: "StandaloneLayout"
+                }})
+            }}
+            </script>
+        </body>
+        </html>
+        """,
+        status_code=200
+    )
 
 # Authentication endpoints
 @app.post("/api/auth/login", response_model=Token)

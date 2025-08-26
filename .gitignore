@@ -58,3 +58,7 @@ cache/
 # Test results
 .pytest_cache/
 .coverage
+
+# Static Swagger UI assets (downloaded)
+static/swagger/*.js
+static/swagger/*.css
