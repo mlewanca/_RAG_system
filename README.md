@@ -11,6 +11,8 @@ curl -fsSL https://raw.githubusercontent.com/mlewanca/_RAG_system/master/scripts
 
 Or see the [Quick Install Guide](docs/quick_install.md) for more options.
 
+> **Note**: The system now uses external Ollama by default. See [External Ollama Setup](docs/external_ollama_setup.md) for configuration details.
+
 ## 📋 Project Overview
 
 This RAG system provides:
@@ -51,6 +53,7 @@ This RAG system provides:
   - [Quick Install Guide](docs/quick_install.md) - Get started in 5 minutes
   - [Debian Installation Guide](docs/debian_installation_guide.md) - Comprehensive setup
   - [Development Setup](docs/development_setup.md) - For developers
+  - [External Ollama Setup](docs/external_ollama_setup.md) - Using external Ollama
 
 - **Usage**:
   - [API Documentation](docs/api_documentation.md) - Complete API reference

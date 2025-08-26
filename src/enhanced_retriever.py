@@ -6,6 +6,7 @@ from datetime import datetime
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import sys
+import os
 from pathlib import Path
 
 # Add parent directory to path for imports
@@ -27,15 +28,16 @@ class EnhancedRetriever:
         self.config = config
         
         # Initialize embeddings
+        ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
         self.embeddings = OllamaEmbeddings(
             model=config.embedding_model,
-            base_url="http://localhost:11434"
+            base_url=ollama_base_url
         )
         
         # Initialize LLM
         self.llm = Ollama(
             model=config.generation_model,
-            base_url="http://localhost:11434",
+            base_url=ollama_base_url,
             temperature=0.7,
             num_predict=512
         )
