@@ -21,7 +21,7 @@ from langchain_community.document_loaders import (
     UnstructuredMarkdownLoader
 )
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import OllamaEmbeddings
+from langchain_ollama import OllamaEmbeddings
 from langchain_community.vectorstores import Chroma
 import chromadb
 

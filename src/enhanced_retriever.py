@@ -12,8 +12,8 @@ from pathlib import Path
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
 
-from langchain_community.embeddings import OllamaEmbeddings
-from langchain_community.llms import Ollama
+from langchain_ollama import OllamaEmbeddings
+from langchain_ollama import Ollama
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 import chromadb
