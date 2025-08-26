@@ -12,7 +12,7 @@ import mimetypes
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Document processing libraries
-from langchain.document_loaders import (
+from langchain_community.document_loaders import (
     PyPDFLoader,
     TextLoader,
     UnstructuredWordDocumentLoader,
