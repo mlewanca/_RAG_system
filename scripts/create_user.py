@@ -5,6 +5,7 @@ import sys
 import os
 import getpass
 from pathlib import Path
+from datetime import datetime
 
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
@@ -28,8 +29,8 @@ def main():
             return
         
         # Check if user already exists
-        existing_users = security_manager.list_users()
-        if username in existing_users:
+        existing_user = security_manager.get_user(username)
+        if existing_user:
             print(f"Error: User '{username}' already exists")
             return
         
@@ -43,7 +44,7 @@ def main():
                 continue
             
             # Validate password
-            is_valid, message = security_manager.validate_password(password)
+            is_valid, message = security_manager.validate_password_strength(password)
             if not is_valid:
                 print(f"Error: {message}")
                 continue
@@ -76,11 +77,21 @@ def main():
         
         # Create the user
         try:
-            security_manager.create_user(
-                username=username,
-                password=password,
-                role=role
-            )
+            # Hash the password
+            hashed_password = security_manager.get_password_hash(password)
+            
+            # Create user data
+            user_data = {
+                "username": username,
+                "hashed_password": hashed_password,
+                "role": role,
+                "created_at": datetime.utcnow().isoformat(),
+                "password_changed_at": datetime.utcnow().isoformat(),
+                "is_active": True
+            }
+            
+            # Save the user
+            security_manager.save_user(username, user_data)
             
             print(f"\n✓ User '{username}' created successfully with role '{role}'")
             print(f"  Access permissions: {get_role_description(role)}")
