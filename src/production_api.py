@@ -23,17 +23,22 @@ from src.enhanced_retriever import EnhancedRetriever
 from src.document_processor import DocumentProcessor
 
 # Setup logging
-log_dir = Path('/data/logs')
-log_dir.mkdir(parents=True, exist_ok=True)
-log_file = log_dir / 'api.log'
+log_handlers = [logging.StreamHandler()]  # Always include console handler
+
+# Try to set up file logging
+try:
+    log_dir = Path('/data/logs')
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / 'api.log'
+    log_handlers.append(logging.FileHandler(str(log_file)))
+except (PermissionError, OSError) as e:
+    print(f"Warning: Unable to create log file: {e}")
+    print("Continuing with console-only logging")
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(str(log_file)),
-        logging.StreamHandler()
-    ]
+    handlers=log_handlers
 )
 logger = logging.getLogger(__name__)
 
