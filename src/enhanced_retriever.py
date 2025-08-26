@@ -13,7 +13,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from langchain_ollama import OllamaEmbeddings
-from langchain_ollama import Ollama
+from langchain_ollama import OllamaLLM
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 import chromadb
