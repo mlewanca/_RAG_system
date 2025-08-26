@@ -60,8 +60,9 @@ app = FastAPI(
     redoc_url="/api/redoc"
 )
 
-# Mount static files for Swagger UI
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Mount static files for Swagger UI if directory exists
+if Path("static").exists():
+    app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Setup CORS
 app.add_middleware(
@@ -142,40 +143,79 @@ async def root():
 # Custom Swagger UI with local assets
 @app.get("/api/docs", include_in_schema=False)
 async def custom_swagger_ui():
-    return HTMLResponse(
-        content=f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <link type="text/css" rel="stylesheet" href="/static/swagger/swagger-ui.css">
-            <title>{app.title} - Swagger UI</title>
-        </head>
-        <body>
-            <div id="swagger-ui"></div>
-            <script src="/static/swagger/swagger-ui-bundle.js"></script>
-            <script src="/static/swagger/swagger-ui-standalone-preset.js"></script>
-            <script>
-            window.onload = function() {{
-                window.ui = SwaggerUIBundle({{
-                    url: '/openapi.json',
-                    dom_id: '#swagger-ui',
-                    deepLinking: true,
-                    presets: [
-                        SwaggerUIBundle.presets.apis,
-                        SwaggerUIStandalonePreset
-                    ],
-                    plugins: [
-                        SwaggerUIBundle.plugins.DownloadUrl
-                    ],
-                    layout: "StandaloneLayout"
-                }})
-            }}
-            </script>
-        </body>
-        </html>
-        """,
-        status_code=200
-    )
+    # Check if we have local swagger assets
+    if Path("static/swagger/swagger-ui.css").exists():
+        # Use local assets
+        return HTMLResponse(
+            content=f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <link type="text/css" rel="stylesheet" href="/static/swagger/swagger-ui.css">
+                <title>{app.title} - Swagger UI</title>
+            </head>
+            <body>
+                <div id="swagger-ui"></div>
+                <script src="/static/swagger/swagger-ui-bundle.js"></script>
+                <script src="/static/swagger/swagger-ui-standalone-preset.js"></script>
+                <script>
+                window.onload = function() {{
+                    window.ui = SwaggerUIBundle({{
+                        url: '/openapi.json',
+                        dom_id: '#swagger-ui',
+                        deepLinking: true,
+                        presets: [
+                            SwaggerUIBundle.presets.apis,
+                            SwaggerUIStandalonePreset
+                        ],
+                        plugins: [
+                            SwaggerUIBundle.plugins.DownloadUrl
+                        ],
+                        layout: "StandaloneLayout"
+                    }})
+                }}
+                </script>
+            </body>
+            </html>
+            """,
+            status_code=200
+        )
+    else:
+        # Fallback to CDN
+        return HTMLResponse(
+            content=f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css" />
+                <title>{app.title} - Swagger UI</title>
+            </head>
+            <body>
+                <div id="swagger-ui"></div>
+                <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js" crossorigin></script>
+                <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-standalone-preset.js" crossorigin></script>
+                <script>
+                window.onload = function() {{
+                    window.ui = SwaggerUIBundle({{
+                        url: '/openapi.json',
+                        dom_id: '#swagger-ui',
+                        deepLinking: true,
+                        presets: [
+                            SwaggerUIBundle.presets.apis,
+                            SwaggerUIStandalonePreset
+                        ],
+                        plugins: [
+                            SwaggerUIBundle.plugins.DownloadUrl
+                        ],
+                        layout: "StandaloneLayout"
+                    }})
+                }}
+                </script>
+            </body>
+            </html>
+            """,
+            status_code=200
+        )
 
 # Authentication endpoints
 @app.post("/api/auth/login", response_model=Token)
