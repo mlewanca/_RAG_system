@@ -78,11 +78,19 @@ class EnhancedRetriever:
         allowed_categories = get_role_permissions(user_role)
         
         # Build filter for allowed document categories
-        filters = {
-            "$or": [
-                {"category": cat} for cat in allowed_categories
-            ]
-        }
+        if len(allowed_categories) == 1:
+            # If only one category, use direct filter
+            filters = {"category": allowed_categories[0]}
+        elif len(allowed_categories) > 1:
+            # If multiple categories, use $or
+            filters = {
+                "$or": [
+                    {"category": cat} for cat in allowed_categories
+                ]
+            }
+        else:
+            # If no categories allowed, return empty filter
+            filters = {}
         
         return filters
     
@@ -111,12 +119,20 @@ class EnhancedRetriever:
             query_embedding = self.embeddings.embed_query(query)
             
             # Search similar documents
-            results = collection.query(
-                query_embeddings=[query_embedding],
-                n_results=max_results,
-                where=combined_filters if collection.count() > 0 else None,
-                include=["metadatas", "documents", "distances"]
-            )
+            # Only apply filters if they're not empty
+            query_params = {
+                "query_embeddings": [query_embedding],
+                "n_results": max_results,
+                "include": ["metadatas", "documents", "distances"]
+            }
+            
+            # Only add where clause if we have filters and documents
+            if combined_filters and collection.count() > 0:
+                # Check if filters are not empty dict
+                if combined_filters != {}:
+                    query_params["where"] = combined_filters
+            
+            results = collection.query(**query_params)
             
             if not results['ids'][0]:
                 logger.info("No matching documents found")
