@@ -23,11 +23,15 @@ from src.enhanced_retriever import EnhancedRetriever
 from src.document_processor import DocumentProcessor
 
 # Setup logging
+log_dir = Path('/data/logs')
+log_dir.mkdir(parents=True, exist_ok=True)
+log_file = log_dir / 'api.log'
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('/nvme0n1p2/logs/api.log'),
+        logging.FileHandler(str(log_file)),
         logging.StreamHandler()
     ]
 )
