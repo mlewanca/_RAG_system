@@ -54,6 +54,7 @@ This RAG system provides:
   - [Debian Installation Guide](docs/debian_installation_guide.md) - Comprehensive setup
   - [Development Setup](docs/development_setup.md) - For developers
   - [External Ollama Setup](docs/external_ollama_setup.md) - Using external Ollama
+  - [Port Configuration](docs/port_configuration.md) - Network ports and access
 
 - **Usage**:
   - [API Documentation](docs/api_documentation.md) - Complete API reference
@@ -93,6 +94,8 @@ See the [Debian Installation Guide](docs/debian_installation_guide.md) for detai
 
 ## 🚦 Usage Examples
 
+> **Note**: If accessing through nginx, use port 8880 for HTTP or 8843 for HTTPS (e.g., `http://localhost:8880/api`). Direct API access remains on port 8000.
+
 ### Basic Query
 ```bash
 # Get auth token
@@ -128,9 +131,12 @@ results = client.query("system configuration")
 
 ## 📊 Monitoring
 
+- **Nginx (HTTP)**: http://localhost:8880
+- **Nginx (HTTPS)**: https://localhost:8843
+- **API (Direct)**: http://localhost:8000
 - **Prometheus Metrics**: http://localhost:9090
 - **Grafana Dashboards**: http://localhost:3000
-- **Health Check**: http://localhost:8000/health
+- **Health Check**: http://localhost:8000/health or http://localhost:8880/health
 - **Structured Logging**: JSON format for easy parsing
 
 ## 🤝 Contributing
