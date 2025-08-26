@@ -1,5 +1,7 @@
 # RAG System
 
+[![Version](https://img.shields.io/badge/version-0.1-blue.svg)](https://github.com/mlewanca/_RAG_system/releases/tag/v0.1)
+
 A production-ready Retrieval-Augmented Generation (RAG) system with enterprise-grade security, scalability, and modularity.
 
 ## 🚀 Quick Start
