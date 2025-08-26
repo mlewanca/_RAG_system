@@ -1,6 +1,6 @@
 """Production API for RAG System with FastAPI"""
 
-from fastapi import FastAPI, HTTPException, Depends, status, Request
+from fastapi import FastAPI, HTTPException, Depends, status, Request, File, UploadFile
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, HTMLResponse
@@ -11,6 +11,8 @@ from datetime import datetime
 import logging
 from pathlib import Path
 import sys
+import tempfile
+import shutil
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -294,7 +296,7 @@ async def upload_document(
         )
     
     try:
-        result = await document_processor.process_document(file_path)
+        result = document_processor.process_document(file_path)
         
         return DocumentUploadResponse(
             filename=Path(file_path).name,
@@ -310,6 +312,63 @@ async def upload_document(
             status="error",
             message=str(e)
         )
+
+# Document upload endpoint with file upload (admin only)
+@app.post("/api/documents/upload-file", response_model=DocumentUploadResponse)
+async def upload_document_file(
+    file: UploadFile = File(...),
+    category: str = "service",
+    current_user = Depends(get_current_user)
+):
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only administrators can upload documents"
+        )
+    
+    # Validate file type
+    allowed_extensions = ['.pdf', '.txt', '.md', '.docx', '.doc', '.xlsx', '.xls', '.png', '.jpg', '.jpeg']
+    file_extension = Path(file.filename).suffix.lower()
+    
+    if file_extension not in allowed_extensions:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"File type {file_extension} not supported. Allowed: {', '.join(allowed_extensions)}"
+        )
+    
+    # Save uploaded file to temporary location
+    temp_file = None
+    try:
+        # Create temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as tmp:
+            temp_file = tmp.name
+            shutil.copyfileobj(file.file, tmp)
+        
+        # Process the document
+        result = document_processor.process_document(temp_file, category)
+        
+        return DocumentUploadResponse(
+            filename=file.filename,
+            status="success",
+            message="Document processed successfully",
+            document_id=result.get("document_id")
+        )
+    
+    except Exception as e:
+        logger.error(f"Error processing uploaded document: {e}")
+        return DocumentUploadResponse(
+            filename=file.filename,
+            status="error",
+            message=str(e)
+        )
+    
+    finally:
+        # Clean up temporary file
+        if temp_file and Path(temp_file).exists():
+            try:
+                Path(temp_file).unlink()
+            except Exception:
+                pass
 
 # User profile endpoint
 @app.get("/api/user/profile")
