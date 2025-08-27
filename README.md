@@ -15,6 +15,12 @@ Or see the [Quick Install Guide](docs/quick_install.md) for more options.
 
 > **Note**: The system now uses external Ollama by default. See [External Ollama Setup](docs/external_ollama_setup.md) for configuration details.
 
+## ⚠️ Important: Network Safety Configuration
+
+**WARNING**: This system uses Docker host network mode to prevent network connectivity issues. Custom Docker networks can interfere with system networking and cause SSH disconnections. The `docker-compose.yml` is configured with `network_mode: "host"` for all services - do NOT remove this configuration.
+
+If you need to use a different network configuration, thoroughly test it in an isolated environment first to ensure it doesn't break system network connectivity.
+
 ## 📋 Project Overview
 
 This RAG system provides:
