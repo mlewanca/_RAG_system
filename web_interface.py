@@ -55,6 +55,10 @@ def login_page():
                         if user_response.status_code == 200:
                             user_data = user_response.json()
                             st.session_state.role = user_data.get("role", "service")
+                        else:
+                            # If /api/auth/me fails, set default role
+                            st.session_state.role = "service"
+                            st.warning(f"Could not fetch user details (status: {user_response.status_code}). Using default role.")
                         
                         st.success("Login successful!")
                         st.rerun()
