@@ -11,7 +11,7 @@ services:
     network_mode: "host"
     volumes:
       - ./data:/data
-      - ./config/.env:/app/.env:ro
+      - ./config/.env:/data/config/.env:ro
     environment:
       - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://localhost:11434}
       - JWT_SECRET=${JWT_SECRET:-your-secret-key-here-minimum-32-characters}
