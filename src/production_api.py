@@ -248,7 +248,7 @@ async def get_me(current_user = Depends(get_current_user)):
     return {
         "username": current_user.username,
         "role": current_user.role,
-        "is_active": current_user.is_active
+        "is_active": True  # Default to true for authenticated users
     }
 
 # Query endpoint with rate limiting
