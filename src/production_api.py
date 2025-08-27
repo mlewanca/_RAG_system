@@ -242,6 +242,15 @@ async def login(request: LoginRequest):
     logger.info(f"Successful login for user: {request.username}")
     return {"access_token": access_token, "token_type": "bearer"}
 
+# Get current user info endpoint
+@app.get("/api/auth/me")
+async def get_me(current_user = Depends(get_current_user)):
+    return {
+        "username": current_user.username,
+        "role": current_user.role,
+        "is_active": current_user.is_active
+    }
+
 # Query endpoint with rate limiting
 @app.post("/api/query", response_model=QueryResponse)
 @limiter.limit("5/minute")  # Default rate limit
