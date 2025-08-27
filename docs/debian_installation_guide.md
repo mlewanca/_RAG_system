@@ -107,7 +107,7 @@ docker compose ps
 docker compose logs -f
 
 # Pull Ollama models
-docker compose exec ollama ollama pull nomic-embed-text
+docker compose exec ollama ollama pull snowflake-arctic-embed2:latest
 docker compose exec ollama ollama pull gemma3:27b
 docker compose exec ollama ollama pull qwen3:30b
 ```
@@ -251,7 +251,7 @@ sudo systemctl enable ollama
 sudo systemctl start ollama
 
 # Pull models
-ollama pull nomic-embed-text
+ollama pull snowflake-arctic-embed2:latest
 ollama pull gemma3:27b
 ollama pull qwen3:30b
 ```

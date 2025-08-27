@@ -21,7 +21,7 @@ The RAG (Retrieval-Augmented Generation) system uses a specific architecture tha
 3. **Ollama Models**: Base language models without your data
    - gemma3:27b - Main generation model
    - qwen3:30b - Multimodal model
-   - nomic-embed-text - Embedding model
+   - snowflake-arctic-embed2:latest - Embedding model
 
 4. **RAG API**: The orchestration layer
    - Handles authentication and authorization

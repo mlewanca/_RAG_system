@@ -15,7 +15,7 @@ The RAG system has been updated to support external Ollama instances. This allow
 1. Ollama must be installed and running on your host machine or external server
 2. Required models must be downloaded:
    ```bash
-   ollama pull nomic-embed-text
+   ollama pull snowflake-arctic-embed2:latest
    ollama pull gemma3:27b
    ollama pull qwen3:30b
    ```
@@ -106,7 +106,7 @@ Ensure all required models are downloaded on the Ollama instance:
 ollama list
 
 # Pull missing models
-ollama pull nomic-embed-text
+ollama pull snowflake-arctic-embed2:latest
 ollama pull gemma3:27b
 ollama pull qwen3:30b
 ```

@@ -118,7 +118,7 @@ API_HOST=127.0.0.1
 API_PORT=8000
 
 # Model Configuration
-EMBEDDING_MODEL=nomic-embed-text
+EMBEDDING_MODEL=snowflake-arctic-embed2:latest
 GENERATION_MODEL=gemma3:27b
 MULTIMODAL_MODEL=qwen3:30b
 ```
@@ -130,7 +130,7 @@ MULTIMODAL_MODEL=qwen3:30b
 ollama serve &
 
 # Pull required models
-ollama pull nomic-embed-text
+ollama pull snowflake-arctic-embed2:latest
 ollama pull gemma3:27b
 ollama pull qwen3:30b
 ```

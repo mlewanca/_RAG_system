@@ -337,7 +337,7 @@ pull_models() {
     
     # Pull required models
     MODELS=(
-        "nomic-embed-text"
+        "snowflake-arctic-embed2:latest"
         "gemma3:27b"
         "qwen3:30b"
     )
@@ -380,7 +380,7 @@ MAX_LOGIN_ATTEMPTS=5
 LOCKOUT_DURATION_MINUTES=30
 
 # Model Configuration (Available Ollama Models)
-EMBEDDING_MODEL=nomic-embed-text
+EMBEDDING_MODEL=snowflake-arctic-embed2:latest
 GENERATION_MODEL=gemma3:27b
 MULTIMODAL_MODEL=qwen3:30b
 

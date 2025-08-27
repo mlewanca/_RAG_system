@@ -51,7 +51,7 @@ docker compose up -d
 sleep 30
 
 # Pull AI models
-docker compose exec ollama ollama pull nomic-embed-text
+docker compose exec ollama ollama pull snowflake-arctic-embed2:latest
 docker compose exec ollama ollama pull gemma3:27b
 ```
 

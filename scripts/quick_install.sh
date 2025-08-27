@@ -148,7 +148,7 @@ pull_models() {
     
     # Pull embedding model
     echo -e "${YELLOW}Pulling embedding model...${NC}"
-    docker compose exec -T ollama ollama pull nomic-embed-text
+    docker compose exec -T ollama ollama pull snowflake-arctic-embed2:latest
     
     # Pull generation model
     echo -e "${YELLOW}Pulling generation model (large download)...${NC}"

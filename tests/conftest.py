@@ -113,7 +113,7 @@ def mock_ollama_response():
         if endpoint == "/api/tags":
             return {
                 "models": [
-                    {"name": "nomic-embed-text", "size": 274230980},
+                    {"name": "snowflake-arctic-embed2:latest", "size": 274230980},
                     {"name": "gemma3:27b", "size": 15955116544},
                 ]
             }

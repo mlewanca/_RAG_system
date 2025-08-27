@@ -5,6 +5,12 @@ All notable changes to the RAG System will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2025-08-27
+
+### Changed
+- Updated embedding model from `nomic-embed-text` to `snowflake-arctic-embed2:latest` for improved performance
+- Enhanced Docker networking configuration to use host network mode, preventing system network disruption
+
 ## [0.2.0] - 2025-08-26
 
 ### Added
@@ -30,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial release of the RAG (Retrieval-Augmented Generation) System
 - Document upload via API and Swagger UI interface
 - ChromaDB vector storage integration for efficient document retrieval
-- Ollama LLM integration with gemma3:27b and nomic-embed-text models
+- Ollama LLM integration with gemma3:27b and nomic-embed-text models (later updated to snowflake-arctic-embed2:latest in v0.2.1)
 - JWT-based authentication system
 - Role-based access control (admin, developer, service, hr, finance, legal, marketing roles)
 - Multi-format document support (PDF, DOCX, XLSX, TXT, MD, PNG, JPG)
