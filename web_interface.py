@@ -152,26 +152,32 @@ def query_interface_page():
                 response = requests.post(
                     f"{API_BASE_URL}/api/query",
                     headers=headers,
-                    json={"query": query, "top_k": top_k}
+                    json={"query": query, "max_results": top_k}
                 )
             
             if response.status_code == 200:
                 result = response.json()
                 
-                st.subheader("🤖 Answer")
-                st.markdown(result["answer"])
-                
-                if result.get("sources"):
-                    st.subheader("📚 Sources")
-                    for i, source in enumerate(result["sources"], 1):
-                        with st.expander(f"Source {i}: {source.get('metadata', {}).get('source', 'Unknown')}"):
-                            st.text(source.get("page_content", ""))
-                            
-                            metadata = source.get("metadata", {})
-                            if metadata:
-                                st.caption("Metadata:")
-                                for key, value in metadata.items():
-                                    st.caption(f"**{key}**: {value}")
+                # The first result contains the generated answer
+                if result.get("results") and len(result["results"]) > 0:
+                    st.subheader("🤖 Answer")
+                    st.markdown(result["results"][0]["content"])
+                    
+                    # Show source documents (skip the first which is the generated answer)
+                    if len(result.get("results", [])) > 1:
+                        st.subheader("📚 Sources")
+                        for i, source in enumerate(result["results"][1:], 1):
+                            source_name = source.get('metadata', {}).get('source', 'Unknown')
+                            with st.expander(f"Source {i}: {source_name}"):
+                                st.text(source.get("content", ""))
+                                
+                                metadata = source.get("metadata", {})
+                                if metadata:
+                                    st.caption("Metadata:")
+                                    for key, value in metadata.items():
+                                        st.caption(f"**{key}**: {value}")
+                else:
+                    st.warning("No results found for your query.")
             else:
                 st.error(f"Query failed: {response.text}")
         except Exception as e:
