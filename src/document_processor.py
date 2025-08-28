@@ -213,13 +213,17 @@ class DocumentProcessor:
             logger.error(f"Error processing document {file_path}: {e}")
             
             # Move to quarantine
-            quarantine_path = self.quarantine_dir / file_path.name
-            shutil.move(str(file_path), str(quarantine_path))
+            try:
+                quarantine_path = self.quarantine_dir / file_path.name
+                shutil.move(str(file_path), str(quarantine_path))
+                quarantined = True
+            except Exception:
+                quarantined = False
             
             return {
                 "status": "error",
-                "message": str(e),
-                "quarantined": True
+                "message": "Document processing failed. The file has been quarantined for review.",
+                "quarantined": quarantined
             }
     
     def batch_process(self, file_paths: List[str], max_workers: int = 4, category: str = "service") -> List[Dict[str, Any]]:

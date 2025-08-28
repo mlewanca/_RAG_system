@@ -27,11 +27,14 @@ class UserModel(BaseModel):
 
 class Token(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str = "bearer"
+    expires_in: int
 
 class TokenData(BaseModel):
     username: Optional[str] = None
     role: Optional[str] = None
+    token_type: str = "access"  # "access" or "refresh"
 
 class SecurityManager:
     def __init__(self, config):
@@ -85,19 +88,39 @@ class SecurityManager:
         else:
             expire = datetime.utcnow() + timedelta(hours=self.token_expire_hours)
         
-        to_encode.update({"exp": expire})
+        to_encode.update({
+            "exp": expire,
+            "type": "access",
+            "iat": datetime.utcnow()
+        })
         encoded_jwt = jwt.encode(to_encode, self.jwt_secret, algorithm=self.jwt_algorithm)
         return encoded_jwt
     
-    def verify_token(self, token: str) -> Optional[TokenData]:
+    def create_refresh_token(self, data: dict) -> str:
+        """Create JWT refresh token"""
+        to_encode = data.copy()
+        expire = datetime.utcnow() + timedelta(days=self.config.refresh_token_expire_days)
+        
+        to_encode.update({
+            "exp": expire,
+            "type": "refresh",
+            "iat": datetime.utcnow()
+        })
+        encoded_jwt = jwt.encode(to_encode, self.jwt_secret, algorithm=self.jwt_algorithm)
+        return encoded_jwt
+    
+    def verify_token(self, token: str, expected_type: str = "access") -> Optional[TokenData]:
         """Verify JWT token and extract data"""
         try:
             payload = jwt.decode(token, self.jwt_secret, algorithms=[self.jwt_algorithm])
             username: str = payload.get("sub")
             role: str = payload.get("role")
-            if username is None:
+            token_type: str = payload.get("type", "access")
+            
+            if username is None or token_type != expected_type:
                 return None
-            return TokenData(username=username, role=role)
+            
+            return TokenData(username=username, role=role, token_type=token_type)
         except JWTError:
             return None
     
@@ -177,3 +200,32 @@ class SecurityManager:
         alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()"
         password = ''.join(secrets.choice(alphabet) for _ in range(length))
         return password
+    
+    def refresh_access_token(self, refresh_token: str) -> Optional[Dict]:
+        """Create new access token from valid refresh token"""
+        token_data = self.verify_token(refresh_token, expected_type="refresh")
+        if not token_data:
+            return None
+        
+        # Verify user still exists and is active
+        user = self.get_user(token_data.username)
+        if not user or user.get('disabled', False):
+            return None
+        
+        # Create new access token
+        access_token = self.create_access_token(
+            data={"sub": token_data.username, "role": token_data.role}
+        )
+        
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "expires_in": self.token_expire_hours * 3600
+        }
+    
+    def invalidate_refresh_tokens(self, username: str):
+        """Invalidate all refresh tokens for a user (logout all sessions)"""
+        user = self.get_user(username)
+        if user:
+            user['token_invalidated_at'] = datetime.utcnow().isoformat()
+            self.save_user(username, user)
